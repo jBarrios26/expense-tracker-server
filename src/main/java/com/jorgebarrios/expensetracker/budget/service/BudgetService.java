@@ -9,6 +9,7 @@ import com.jorgebarrios.expensetracker.category.model.BudgetCategories;
 import com.jorgebarrios.expensetracker.category.model.BudgetCategory;
 import com.jorgebarrios.expensetracker.category.repository.BudgetCategoriesRepository;
 import com.jorgebarrios.expensetracker.category.repository.BudgetCategoryRepository;
+import com.jorgebarrios.expensetracker.category.service.BudgetCategoryService;
 import com.jorgebarrios.expensetracker.common.exception.BudgetUserNotFoundException;
 import com.jorgebarrios.expensetracker.expense.BudgetExpense;
 import com.jorgebarrios.expensetracker.expense.repository.BudgetExpenseRepository;
@@ -33,6 +34,8 @@ public class BudgetService {
     private final BudgetCategoryRepository budgetCategoryRepository;
     private final BudgetCategoriesRepository budgetCategoriesRepository;
     private final BudgetExpenseRepository budgetExpenseRepository;
+
+    private final BudgetCategoryService budgetCategoryService;
 
     public Budget createBudget(
             final String userId,
@@ -151,5 +154,25 @@ public class BudgetService {
                         size
                 )
         );
+    }
+
+    public BudgetExpense createExpense(
+            final String name,
+            final Date expenseDate,
+            final Double amount,
+            final UUID budget,
+            final UUID category
+    ) {
+        Budget budgetEntity = getUserBudget(budget.toString());
+        BudgetCategory categoryEntity =
+                budgetCategoryService.getCategory(category);
+        BudgetExpense expense = new BudgetExpense(
+                name,
+                expenseDate,
+                amount,
+                budgetEntity,
+                categoryEntity
+        );
+        return budgetExpenseRepository.save(expense);
     }
 }

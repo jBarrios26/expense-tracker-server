@@ -3,6 +3,7 @@ package com.jorgebarrios.expensetracker.budget.controller;
 import com.jorgebarrios.expensetracker.budget.Budget;
 import com.jorgebarrios.expensetracker.budget.exception.BudgetCreateException;
 import com.jorgebarrios.expensetracker.budget.models.dto.CreateBudgetDTO;
+import com.jorgebarrios.expensetracker.budget.models.dto.CreateExpenseDTO;
 import com.jorgebarrios.expensetracker.budget.models.response.*;
 import com.jorgebarrios.expensetracker.budget.service.BudgetService;
 import com.jorgebarrios.expensetracker.common.model.Pagination;
@@ -182,5 +183,46 @@ public class BudgetController {
                                          )
                                  )
         );
+    }
+
+    @PostMapping("/create-expense")
+    @Operation(summary = "Creates a new budget expense for an specific budget",
+            security = @SecurityRequirement(name = "Auth JWT"), method = "POST",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Budget " +
+                                                                     "created " +
+                                                                     "successfully"),
+                    @ApiResponse(responseCode = "400", description = """
+                                                                     Returns code:
+                                                                      3: if budget does not exists,
+                                                                      4:"""),
+
+            })
+    public @ResponseBody ResponseEntity<Expense> addExpense(
+            @Valid @RequestBody
+            CreateExpenseDTO createExpenseDTO
+    ) {
+        BudgetExpense expense =
+                budgetService.createExpense(
+                        createExpenseDTO.getName(),
+                        createExpenseDTO.getDate(),
+                        createExpenseDTO.getAmount(),
+                        createExpenseDTO.getBudget(),
+                        createExpenseDTO.getCategory()
+                );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                             .body(new Expense(
+                                           expense.getId(),
+                                           expense.getName(),
+                                           expense.getAmount(),
+                                           expense.getExpenseDate(),
+                                           new ExpenseCategory(
+                                                   expense.getBudgetCategory()
+                                                          .getName(),
+                                                   expense.getBudgetCategory()
+                                                          .getColor()
+                                           )
+                                   )
+                             );
     }
 }
