@@ -1,5 +1,6 @@
 package com.jorgebarrios.expensetracker.category.service;
 
+import com.jorgebarrios.expensetracker.category.exception.BudgetCategoryNotFound;
 import com.jorgebarrios.expensetracker.category.model.BudgetCategory;
 import com.jorgebarrios.expensetracker.category.repository.BudgetCategoriesRepository;
 import com.jorgebarrios.expensetracker.category.repository.BudgetCategoryRepository;
@@ -29,18 +30,32 @@ public class BudgetCategoryService {
         return budgetCategoryRepository.findUserCategories(UUID.fromString(userId));
     }
 
-    public BudgetCategory createNewCategory(final String name,
-                                            final String color,
-                                            final String userId) {
+    public BudgetCategory createNewCategory(
+            final String name,
+            final String color,
+            final String userId
+    ) {
         Optional<BudgetUser> user =
                 budgetUserRepository.findById(UUID.fromString(userId));
         if (user.isEmpty()) {
             throw new BudgetUserNotFoundException(userId);
         }
-        BudgetCategory category = new BudgetCategory(name, color, user.get());
+        BudgetCategory category = new BudgetCategory(
+                name,
+                color,
+                user.get()
+        );
         return budgetCategoryRepository.save(category);
     }
 
+    public BudgetCategory getCategory(final UUID id) {
+        Optional<BudgetCategory> category =
+                budgetCategoryRepository.findById(id);
+        if (category.isEmpty()) {
+            throw new BudgetCategoryNotFound(id.toString());
+        }
+        return category.get();
+    }
 
 
 }

@@ -4,6 +4,7 @@ import com.jorgebarrios.expensetracker.auth.exception.TokenRefreshException;
 import com.jorgebarrios.expensetracker.budget.exception.BudgetCreateException;
 import com.jorgebarrios.expensetracker.budget.exception.BudgetNotFoundException;
 import com.jorgebarrios.expensetracker.budget.exception.UnknownBudgetCategoryException;
+import com.jorgebarrios.expensetracker.category.exception.BudgetCategoryNotFound;
 import com.jorgebarrios.expensetracker.common.BasicErrorResponse;
 import com.jorgebarrios.expensetracker.common.exception.BudgetUserNotFoundException;
 import com.jorgebarrios.expensetracker.user.exceptions.UserAlreadyRegisterException;
@@ -100,6 +101,17 @@ public class BudgetUserControllerAdvice extends ResponseEntityExceptionHandler {
                              .body(
                                      new BasicErrorResponse(
                                              8,
+                                             runtimeException.getMessage()
+                                     )
+                             );
+    }
+
+    @ExceptionHandler(BudgetCategoryNotFound.class)
+    ResponseEntity<BasicErrorResponse> budgetCategoryNotFoundExceptionHandler(BudgetCategoryNotFound runtimeException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(
+                                     new BasicErrorResponse(
+                                             9,
                                              runtimeException.getMessage()
                                      )
                              );

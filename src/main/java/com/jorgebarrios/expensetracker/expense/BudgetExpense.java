@@ -50,4 +50,18 @@ public class BudgetExpense {
     @ManyToOne
     @JoinColumn(name = "budget_category", nullable = false)
     private BudgetCategory budgetCategory;
+
+    public BudgetExpense(
+            String name,
+            Date expenseDate,
+            Double amount,
+            Budget budget,
+            BudgetCategory budgetCategory
+    ) {
+        this.amount = amount;
+        this.name = name;
+        this.expenseDate = expenseDate;
+        this.budget = budget;
+        this.budgetCategory = budgetCategory;
+    }
 }

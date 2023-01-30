@@ -29,6 +29,8 @@ public class BudgetCategories {
 
     private Double amountLimit;
 
+    private Double currentSpending = 0.0;
+
     public BudgetCategories(
             Budget budget,
             BudgetCategory budgetCategory,
