@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Entity
 @Table
 @NoArgsConstructor
+@ToString()
 public class Budget {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -58,7 +60,7 @@ public class Budget {
             Double budgetAmountLimit,
             Date budgetPeriod,
             BudgetUser budgetUser
-                 ) {
+    ) {
         this.name = name;
         this.description = description;
         this.budgetAmountLimit = budgetAmountLimit;

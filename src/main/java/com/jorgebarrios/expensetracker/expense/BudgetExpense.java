@@ -1,5 +1,8 @@
 package com.jorgebarrios.expensetracker.expense;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jorgebarrios.expensetracker.budget.Budget;
 import com.jorgebarrios.expensetracker.category.model.BudgetCategory;
 import jakarta.persistence.*;
@@ -26,7 +29,7 @@ public class BudgetExpense {
     private UUID id;
 
     private Double amount;
-
+    private String name;
     @Temporal(TemporalType.DATE)
     private Date expenseDate;
 
@@ -38,11 +41,12 @@ public class BudgetExpense {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdate;
 
-
+    @JsonIgnore
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "budget", nullable = false)
     private Budget budget;
-
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "budget_category", nullable = false)
     private BudgetCategory budgetCategory;

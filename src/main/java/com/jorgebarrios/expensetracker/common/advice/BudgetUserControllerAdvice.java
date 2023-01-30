@@ -2,6 +2,7 @@ package com.jorgebarrios.expensetracker.common.advice;
 
 import com.jorgebarrios.expensetracker.auth.exception.TokenRefreshException;
 import com.jorgebarrios.expensetracker.budget.exception.BudgetCreateException;
+import com.jorgebarrios.expensetracker.budget.exception.BudgetNotFoundException;
 import com.jorgebarrios.expensetracker.budget.exception.UnknownBudgetCategoryException;
 import com.jorgebarrios.expensetracker.common.BasicErrorResponse;
 import com.jorgebarrios.expensetracker.common.exception.BudgetUserNotFoundException;
@@ -29,7 +30,7 @@ public class BudgetUserControllerAdvice extends ResponseEntityExceptionHandler {
                                              1,
                                              userAlreadyRegisterException.getMessage()
                                      )
-                                  );
+                             );
     }
 
     @ExceptionHandler(AuthenticationException.class)
@@ -41,7 +42,7 @@ public class BudgetUserControllerAdvice extends ResponseEntityExceptionHandler {
                                              2,
                                              userAlreadyRegisterException.getMessage()
                                      )
-                                  );
+                             );
     }
 
     @ExceptionHandler(BudgetUserNotFoundException.class)
@@ -53,7 +54,7 @@ public class BudgetUserControllerAdvice extends ResponseEntityExceptionHandler {
                                              3,
                                              budgetUserNotFoundException.getMessage()
                                      )
-                                  );
+                             );
     }
 
     @ExceptionHandler(UnknownBudgetCategoryException.class)
@@ -65,7 +66,7 @@ public class BudgetUserControllerAdvice extends ResponseEntityExceptionHandler {
                                              4,
                                              unknownBudgetCategoryException.getMessage()
                                      )
-                                  );
+                             );
     }
 
     @ExceptionHandler(BudgetCreateException.class)
@@ -77,7 +78,7 @@ public class BudgetUserControllerAdvice extends ResponseEntityExceptionHandler {
                                              5,
                                              budgetCreateException.getMessage()
                                      )
-                                  );
+                             );
     }
 
     @ExceptionHandler(value = TokenRefreshException.class)
@@ -89,8 +90,19 @@ public class BudgetUserControllerAdvice extends ResponseEntityExceptionHandler {
                                              6,
                                              tokenRefreshException.getMessage()
                                      )
-                                  );
+                             );
 
+    }
+
+    @ExceptionHandler(BudgetNotFoundException.class)
+    ResponseEntity<BasicErrorResponse> budgetNotFoundExceptionHandler(BudgetNotFoundException runtimeException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(
+                                     new BasicErrorResponse(
+                                             8,
+                                             runtimeException.getMessage()
+                                     )
+                             );
     }
 
     @ExceptionHandler(RuntimeException.class)
