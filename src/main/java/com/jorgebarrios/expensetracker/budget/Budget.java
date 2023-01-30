@@ -31,6 +31,7 @@ public class Budget {
     private String name;
     private String description;
     private Double budgetAmountLimit;
+    private Double totalSpending = 0.0;
 
     @Temporal(TemporalType.DATE)
     private Date budgetPeriod;

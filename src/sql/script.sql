@@ -9,6 +9,10 @@ BEGIN
     WHERE category.budget = NEW.budget
       AND category.budget_category = NEW.budget_category;
 
+    UPDATE budget b
+    SET total_spending = b.total_spending + new.amount
+    WHERE b.id = NEW.budget;
+
     RETURN NEW;
 END;
 $$;
