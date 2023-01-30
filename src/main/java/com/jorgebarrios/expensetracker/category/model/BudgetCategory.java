@@ -19,6 +19,7 @@ import java.util.UUID;
 @Entity
 @Table
 @NoArgsConstructor
+
 public class BudgetCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -50,7 +51,7 @@ public class BudgetCategory {
             String name,
             String color,
             BudgetUser budgetUser
-                         ) {
+    ) {
         this.name = name;
         this.color = color;
         this.userMade = true;

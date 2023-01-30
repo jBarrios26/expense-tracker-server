@@ -22,7 +22,7 @@ public class BudgetCategories {
     @JoinColumn(name = "budget")
     private Budget budget;
 
-    @JsonBackReference
+
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "budget_category")
     private BudgetCategory budgetCategory;
@@ -33,7 +33,7 @@ public class BudgetCategories {
             Budget budget,
             BudgetCategory budgetCategory,
             Double amountLimit
-                           ) {
+    ) {
         this.budget = budget;
         this.budgetCategory = budgetCategory;
         this.amountLimit = amountLimit;

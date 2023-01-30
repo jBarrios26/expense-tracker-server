@@ -1,5 +1,6 @@
 package com.jorgebarrios.expensetracker.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jorgebarrios.expensetracker.budget.Budget;
 import com.jorgebarrios.expensetracker.category.model.BudgetCategory;
 import jakarta.persistence.*;
@@ -28,9 +29,11 @@ public class BudgetUser {
     private String password;
     private Byte sex;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "budgetUser")
     private List<Budget> budgets;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "budgetUser", cascade = CascadeType.ALL)
     private Set<BudgetCategory> budgetUserCategories;
 
@@ -40,7 +43,7 @@ public class BudgetUser {
             String email,
             String password,
             Byte sex
-                     ) {
+    ) {
         this.username = username;
         this.lastName = lastName;
         this.email = email;
