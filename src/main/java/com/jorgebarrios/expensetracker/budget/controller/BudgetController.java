@@ -122,6 +122,8 @@ public class BudgetController {
                       .toString(),
                 budget.getName(),
                 budget.getDescription(),
+                budget.getBudgetAmountLimit(),
+                budget.getTotalSpending(),
                 budget.getCreateDate(),
                 budget.getBudgetCategories()
                       .stream()
@@ -137,20 +139,43 @@ public class BudgetController {
         ));
     }
 
-    @GetMapping(path = "/item-expenses/{budgetId}", params = {"size", "page"})
-    @Operation(summary = "Returns a list of expenses related to a budget", parameters = {
-            @Parameter(name = "size", description = "size of " + "the page"),
-            @Parameter(name = "page", description = "Page requested")
-    }, security = @SecurityRequirement(name = "Auth JWT"), method = "GET", responses = {
-            @ApiResponse(responseCode = "200", description = "Budget expenses" +
-                                                             " list" + " " +
-                                                             "fetch " +
-                                                             "successfully"),
-            @ApiResponse(responseCode = "400", description = """
-                                                             Returns code:
-                                                              3: if budget does not exists"""),
+    @GetMapping(
+            path = "/item-expenses/{budgetId}",
+            params = {"size", "page"}
+    )
+    @Operation(
+            summary = "Returns a list of expenses related to a budget",
+            parameters = {
+                    @Parameter(
+                            name = "size",
+                            description = "size of " +
+                                          "the page"
+                    ),
+                    @Parameter(
+                            name = "page",
+                            description = "Page requested"
+                    )
+            },
+            security = @SecurityRequirement(name = "Auth JWT"),
+            method = "GET",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description =
+                                    "Budget expenses" +
+                                    " list" + " " +
+                                    "fetch " +
+                                    "successfully"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = """
+                                          Returns code:
+                                           3: if budget does not exists"""
+                    ),
 
-    })
+            })
+    @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<ExpenseList> getUserBudgetExpenses(
             @UUID @PathVariable String budgetId,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -198,6 +223,7 @@ public class BudgetController {
                                                                       4:"""),
 
             })
+    @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<Expense> addExpense(
             @Valid @RequestBody
             CreateExpenseDTO createExpenseDTO

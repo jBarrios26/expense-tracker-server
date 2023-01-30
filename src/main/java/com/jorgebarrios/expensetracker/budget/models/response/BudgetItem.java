@@ -16,6 +16,8 @@ public class BudgetItem {
     String budgetId;
     String name;
     String description;
+    Double budgetLimit;
+    Double totalSpending;
     Date creationDate;
     List<BudgetItemCategories> categories;
 
