@@ -133,7 +133,9 @@ public class BudgetController {
                               budgetCategory.getBudgetCategory()
                                             .getName(),
                               budgetCategory.getBudgetCategory()
-                                            .getColor()
+                                            .getColor(),
+                              budget.getBudgetAmountLimit(),
+                              budget.getTotalSpending()
                       ))
                       .toList()
         ));

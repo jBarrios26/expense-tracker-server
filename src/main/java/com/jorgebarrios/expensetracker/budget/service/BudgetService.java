@@ -104,7 +104,12 @@ public class BudgetService {
     ) {
         LocalDateTime currentDate = LocalDateTime.now();
         Month currentMonth = currentDate.getMonth();
-        int lastDayOfCurrentMonth = currentMonth.maxLength();
+        int lastDayOfCurrentMonth = (
+                                            currentDate.toLocalDate()
+                                                       .isLeapYear()
+                                    ) ?
+                                    currentMonth.maxLength()
+                                      : currentMonth.minLength();
         int currentYear = currentDate.getYear();
         LocalDate fromDate = LocalDate.of(
                 currentYear,
