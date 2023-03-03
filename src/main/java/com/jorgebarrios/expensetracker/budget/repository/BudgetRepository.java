@@ -15,8 +15,8 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
 
     @Query("SELECT budget FROM Budget budget " +
            "WHERE (budget" +
-           ".budgetPeriod < ?2 " +
-           "and budget.budgetPeriod > ?3) and budget.budgetUser.id = ?1")
+           ".budgetPeriod <= ?2 " +
+           "and budget.budgetPeriod >= ?3) and budget.budgetUser.id = ?1")
     Page<Budget> findCurrentMonthBudgetOfUser(
             final UUID userId,
             final

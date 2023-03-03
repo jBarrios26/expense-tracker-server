@@ -127,6 +127,9 @@ public class BudgetService {
         Date to =
                 Date.from(toDate.atStartOfDay(ZoneId.systemDefault())
                                 .toInstant());
+
+        System.out.println(from.toString());
+        System.out.println(to.toString());
         return budgetRepository.findCurrentMonthBudgetOfUser(
                 UUID.fromString(userId),
                 to,
