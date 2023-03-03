@@ -128,14 +128,14 @@ public class BudgetController {
                 budget.getBudgetCategories()
                       .stream()
                       .map(budgetCategory -> new BudgetItemCategories(
-                              budgetCategory.getBudget()
+                              budgetCategory.getBudgetCategory()
                                             .getId(),
                               budgetCategory.getBudgetCategory()
                                             .getName(),
                               budgetCategory.getBudgetCategory()
                                             .getColor(),
-                              budget.getBudgetAmountLimit(),
-                              budget.getTotalSpending()
+                              budgetCategory.getAmountLimit(),
+                              budgetCategory.getCurrentSpending()
                       ))
                       .toList()
         ));
