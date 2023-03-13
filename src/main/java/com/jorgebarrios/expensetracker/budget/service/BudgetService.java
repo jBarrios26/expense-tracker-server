@@ -103,6 +103,34 @@ public class BudgetService {
             final Integer size
     ) {
         LocalDateTime currentDate = LocalDateTime.now();
+        return getBudgets(
+                userId,
+                page,
+                size,
+                currentDate
+        );
+    }
+
+    public Page<Budget> getUserBudgetsFromDate(
+            final String userId,
+            final Integer page,
+            final Integer size,
+            final LocalDateTime currentDate
+    ) {
+        return getBudgets(
+                userId,
+                page,
+                size,
+                currentDate
+        );
+    }
+
+    private Page<Budget> getBudgets(
+            String userId,
+            Integer page,
+            Integer size,
+            LocalDateTime currentDate
+    ) {
         Month currentMonth = currentDate.getMonth();
         int lastDayOfCurrentMonth = (
                                             currentDate.toLocalDate()
@@ -128,8 +156,6 @@ public class BudgetService {
                 Date.from(toDate.atStartOfDay(ZoneId.systemDefault())
                                 .toInstant());
 
-        System.out.println(from.toString());
-        System.out.println(to.toString());
         return budgetRepository.findCurrentMonthBudgetOfUser(
                 UUID.fromString(userId),
                 to,

@@ -14,12 +14,17 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RequestMapping("api/budget")
 @RequiredArgsConstructor
@@ -30,19 +35,34 @@ public class BudgetController {
     private final BudgetUserService budgetUserService;
 
     @PostMapping("/create-budget")
-    @Operation(summary = "Create new budget for associated user", security = @SecurityRequirement(name = "Auth JWT"), method = "POST", responses = {
-            @ApiResponse(responseCode = "201", description = "Create " +
-                                                             "budget " +
-                                                             "Successfully"),
-            @ApiResponse(responseCode = "400", description = """
-                                                             Returns code:
-                                                              3: if user does not exists
-                                                              4: if an unknown category is present
-                                                              5: if save failed"""),
+    @Operation(
+            summary = "Create new budget for associated user",
+            security = @SecurityRequirement(name = "Auth JWT"),
+            method = "POST",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Create " +
+                                          "budget " +
+                                          "Successfully"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = """
+                                          Returns code:
+                                           3: if user does not exists
+                                           4: if an unknown category is present
+                                           5: if save failed"""
+                    ),
 
-    })
+            }
+    )
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody ResponseEntity<CreateBudgetResponse> createNewBudget(@Valid @RequestBody CreateBudgetDTO request) {
+    public @ResponseBody ResponseEntity<CreateBudgetResponse> createNewBudget(
+            @Valid
+            @RequestBody
+            CreateBudgetDTO request
+    ) {
         Budget newBudget = budgetService.createBudget(
                 request.getBudgetUserID(),
                 request.getName(),
@@ -61,11 +81,25 @@ public class BudgetController {
                              ));
     }
 
-    @GetMapping(path = "/{userId}", params = {"page", "size"})
+    @GetMapping(
+            path = "/{userId}",
+            params = {"page", "size"}
+    )
     public @ResponseBody ResponseEntity<CurrentMonthBudgetListResponse> getCurrentBudgetList(
-            @UUID @PathVariable String userId,
-            @RequestParam(name = "size", defaultValue = "10", required = false) int size,
-            @RequestParam(name = "page", defaultValue = "0") int page
+            @UUID
+            @PathVariable
+            String userId,
+            @RequestParam(
+                    name = "size",
+                    defaultValue = "10",
+                    required = false
+            )
+            int size,
+            @RequestParam(
+                    name = "page",
+                    defaultValue = "0"
+            )
+            int page
     ) {
 
         budgetUserService.getUser(userId);
@@ -76,45 +110,37 @@ public class BudgetController {
                 size
         );
 
-        CurrentMonthBudgetListResponse currentMonthBudgetListResponse =
-                new CurrentMonthBudgetListResponse(
-                        Pagination.fromPage(
-                                budgets,
-                                page
-                        ),
-                        budgets.stream()
-                               .map(budget -> new CurrentMonthBudget(
-                                       budget.getId()
-                                             .toString(),
-                                       budget.getName(),
-                                       budget.getCreateDate(),
-                                       budget.getBudgetCategories()
-                                             .stream()
-                                             .map(category -> new CurrentMonthCategories(
-                                                     category.getBudgetCategory()
-                                                             .getColor(),
-                                                     category.getBudgetCategory()
-                                                             .getName()
-                                             ))
-                                             .toList()
-                               ))
-                               .toList()
-                );
-        return ResponseEntity.ok(currentMonthBudgetListResponse);
+        return getCurrentMonthBudgetListResponseResponseEntity(
+                page,
+                budgets
+        );
     }
 
     @GetMapping(path = "/item/{budgetId}")
-    @Operation(summary = "Returns a budget details with its categories", security = @SecurityRequirement(name = "Auth JWT"), method = "GET", responses = {
-            @ApiResponse(responseCode = "200", description = "Budget " +
-                                                             "fetch " +
-                                                             "successfully"),
-            @ApiResponse(responseCode = "400", description = """
-                                                             Returns code:
-                                                              3: if budget does not exists"""),
+    @Operation(
+            summary = "Returns a budget details with its categories",
+            security = @SecurityRequirement(name = "Auth JWT"),
+            method = "GET",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Budget " +
+                                          "fetch " +
+                                          "successfully"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = """
+                                          Returns code:
+                                           3: if budget does not exists"""
+                    ),
 
-    })
+            }
+    )
     public @ResponseBody ResponseEntity<BudgetItem> getUserBudget(
-            @UUID @PathVariable String budgetId
+            @UUID
+            @PathVariable
+            String budgetId
     ) {
         Budget budget = budgetService.getUserBudget(budgetId);
         return ResponseEntity.ok(new BudgetItem(
@@ -176,12 +202,24 @@ public class BudgetController {
                                            3: if budget does not exists"""
                     ),
 
-            })
+            }
+    )
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ResponseEntity<ExpenseList> getUserBudgetExpenses(
-            @UUID @PathVariable String budgetId,
-            @RequestParam(name = "size", defaultValue = "10", required = false) int size,
-            @RequestParam(name = "page", defaultValue = "0") int page
+            @UUID
+            @PathVariable
+            String budgetId,
+            @RequestParam(
+                    name = "size",
+                    defaultValue = "10",
+                    required = false
+            )
+            int size,
+            @RequestParam(
+                    name = "page",
+                    defaultValue = "0"
+            )
+            int page
     ) {
         Page<BudgetExpense> expenses =
                 budgetService.getBudgetExpenses(
@@ -213,21 +251,31 @@ public class BudgetController {
     }
 
     @PostMapping("/create-expense")
-    @Operation(summary = "Creates a new budget expense for an specific budget",
-            security = @SecurityRequirement(name = "Auth JWT"), method = "POST",
+    @Operation(
+            summary = "Creates a new budget expense for an specific budget",
+            security = @SecurityRequirement(name = "Auth JWT"),
+            method = "POST",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "Budget " +
-                                                                     "created " +
-                                                                     "successfully"),
-                    @ApiResponse(responseCode = "400", description = """
-                                                                     Returns code:
-                                                                      3: if budget does not exists,
-                                                                      4:"""),
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Budget " +
+                                          "created " +
+                                          "successfully"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = """
+                                          Returns code:
+                                           3: if budget does not exists,
+                                           4:"""
+                    ),
 
-            })
+            }
+    )
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ResponseEntity<Expense> addExpense(
-            @Valid @RequestBody
+            @Valid
+            @RequestBody
             CreateExpenseDTO createExpenseDTO
     ) {
         BudgetExpense expense =
@@ -252,5 +300,103 @@ public class BudgetController {
                                            )
                                    )
                              );
+    }
+
+    @GetMapping(
+            path = "budget-history/{userId}",
+            params = {"page", "size",
+                      "month",
+                      "year"
+            }
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody ResponseEntity<CurrentMonthBudgetListResponse> getBudget(
+            @UUID
+            @PathVariable
+            String userId,
+            @RequestParam(
+                    name = "size",
+                    defaultValue = "10",
+                    required = false
+            )
+            int size,
+            @RequestParam(
+                    name = "page",
+                    defaultValue = "0"
+            )
+            int page,
+            @RequestParam(
+                    name = "month",
+                    defaultValue = "1"
+            )
+            @Min(
+                    value = 1,
+                    message = "Month should be greater than or equal 1"
+            ) @Max(
+                    value = 12,
+                    message = "Month should be lower than or equal 12"
+            ) int month,
+            @RequestParam(
+                    name = "year",
+                    defaultValue = "2000"
+            )
+            @Positive int year
+    ) {
+
+        budgetUserService.getUser(userId);
+
+        LocalDateTime currentDate = LocalDateTime.of(
+                year,
+                month,
+                1,
+                0,
+                0
+        );
+        Page<Budget> budgets = budgetService.getUserBudgetsFromDate(
+                userId,
+                page,
+                size,
+                currentDate
+        );
+
+        return getCurrentMonthBudgetListResponseResponseEntity(
+                page,
+                budgets
+        );
+    }
+
+    private ResponseEntity<CurrentMonthBudgetListResponse> getCurrentMonthBudgetListResponseResponseEntity(
+            @RequestParam(
+                    name = "page",
+                    defaultValue = "0"
+            )
+            int page,
+            Page<Budget> budgets
+    ) {
+        CurrentMonthBudgetListResponse currentMonthBudgetListResponse =
+                new CurrentMonthBudgetListResponse(
+                        Pagination.fromPage(
+                                budgets,
+                                page
+                        ),
+                        budgets.stream()
+                               .map(budget -> new CurrentMonthBudget(
+                                       budget.getId()
+                                             .toString(),
+                                       budget.getName(),
+                                       budget.getCreateDate(),
+                                       budget.getBudgetCategories()
+                                             .stream()
+                                             .map(category -> new CurrentMonthCategories(
+                                                     category.getBudgetCategory()
+                                                             .getColor(),
+                                                     category.getBudgetCategory()
+                                                             .getName()
+                                             ))
+                                             .toList()
+                               ))
+                               .toList()
+                );
+        return ResponseEntity.ok(currentMonthBudgetListResponse);
     }
 }
