@@ -19,7 +19,7 @@ public class Pagination {
             Boolean hasNextPage,
             Boolean hasPreviousPage,
             Integer numOfPages
-                     ) {
+    ) {
         this.currentPage = currentPage;
         this.totalItems = totalItems;
         this.hasNextPage = hasNextPage;
@@ -30,12 +30,13 @@ public class Pagination {
     public static Pagination fromPage(
             Page page,
             int currentPage
-                                     ) {
-        return new Pagination(currentPage,
-                              page.getSize(),
-                              page.hasNext(),
-                              page.hasPrevious(),
-                              page.getTotalPages()
+    ) {
+        return new Pagination(
+                currentPage,
+                Integer.parseInt(Long.toString(page.getTotalElements())),
+                page.hasNext(),
+                page.hasPrevious(),
+                page.getTotalPages()
         );
     }
 }
