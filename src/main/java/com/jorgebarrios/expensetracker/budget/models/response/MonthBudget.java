@@ -10,11 +10,11 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @Setter
-public class CurrentMonthBudget {
+public class MonthBudget {
     private String budgetId;
     private String name;
     private Date createdAt;
-    private List<CurrentMonthCategories> topCategories;
+    private List<MonthCategories> topCategories;
 
 }
 

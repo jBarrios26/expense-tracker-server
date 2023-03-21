@@ -85,7 +85,7 @@ public class BudgetController {
             path = "/{userId}",
             params = {"page", "size"}
     )
-    public @ResponseBody ResponseEntity<CurrentMonthBudgetListResponse> getCurrentBudgetList(
+    public @ResponseBody ResponseEntity<BudgetListResponse> getCurrentBudgetList(
             @UUID
             @PathVariable
             String userId,
@@ -310,7 +310,7 @@ public class BudgetController {
             }
     )
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ResponseEntity<CurrentMonthBudgetListResponse> getBudget(
+    public @ResponseBody ResponseEntity<BudgetListResponse> getBudget(
             @UUID
             @PathVariable
             String userId,
@@ -365,7 +365,7 @@ public class BudgetController {
         );
     }
 
-    private ResponseEntity<CurrentMonthBudgetListResponse> getCurrentMonthBudgetListResponseResponseEntity(
+    private ResponseEntity<BudgetListResponse> getCurrentMonthBudgetListResponseResponseEntity(
             @RequestParam(
                     name = "page",
                     defaultValue = "0"
@@ -373,21 +373,21 @@ public class BudgetController {
             int page,
             Page<Budget> budgets
     ) {
-        CurrentMonthBudgetListResponse currentMonthBudgetListResponse =
-                new CurrentMonthBudgetListResponse(
+        BudgetListResponse budgetListResponse =
+                new BudgetListResponse(
                         Pagination.fromPage(
                                 budgets,
                                 page
                         ),
                         budgets.stream()
-                               .map(budget -> new CurrentMonthBudget(
+                               .map(budget -> new MonthBudget(
                                        budget.getId()
                                              .toString(),
                                        budget.getName(),
                                        budget.getCreateDate(),
                                        budget.getBudgetCategories()
                                              .stream()
-                                             .map(category -> new CurrentMonthCategories(
+                                             .map(category -> new MonthCategories(
                                                      category.getBudgetCategory()
                                                              .getColor(),
                                                      category.getBudgetCategory()
@@ -397,6 +397,6 @@ public class BudgetController {
                                ))
                                .toList()
                 );
-        return ResponseEntity.ok(currentMonthBudgetListResponse);
+        return ResponseEntity.ok(budgetListResponse);
     }
 }
