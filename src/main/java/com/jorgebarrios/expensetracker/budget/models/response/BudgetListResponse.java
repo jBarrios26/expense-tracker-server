@@ -10,9 +10,9 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @Setter
-public class CurrentMonthBudgetListResponse {
+public class BudgetListResponse {
     private Pagination pagination;
-    private List<CurrentMonthBudget> budgets;
+    private List<MonthBudget> budgets;
 }
 
 

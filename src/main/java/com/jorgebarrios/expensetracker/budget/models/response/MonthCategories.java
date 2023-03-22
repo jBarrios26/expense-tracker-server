@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CurrentMonthCategories {
+public class MonthCategories {
     private String color;
     private String name;
 }
