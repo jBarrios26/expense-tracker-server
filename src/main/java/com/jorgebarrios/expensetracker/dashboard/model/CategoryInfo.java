@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryInfo {
-    private String color;
     private String name;
-    private String amountSpent;
+    private String color;
+    private Double amountSpent;
 
 }
