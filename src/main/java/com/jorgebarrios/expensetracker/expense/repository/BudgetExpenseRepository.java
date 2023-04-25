@@ -2,6 +2,7 @@ package com.jorgebarrios.expensetracker.expense.repository;
 
 import com.jorgebarrios.expensetracker.expense.BudgetExpense;
 import com.jorgebarrios.expensetracker.expense.model.CategoryInfoDTO;
+import com.jorgebarrios.expensetracker.expense.model.DayExpenseDTO;
 import com.jorgebarrios.expensetracker.expense.model.TotalSpentDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,4 +65,13 @@ public interface BudgetExpenseRepository extends JpaRepository<BudgetExpense,
     )
     List<CategoryInfoDTO> getTopCategoryInExpensesByUser(UUID userId);
 
+    @Query(
+            "SELECT new com.jorgebarrios.expensetracker.expense.model" +
+            ".DayExpenseDTO(function('date_part', 'dow', e.expenseDate), SUM(e" +
+            ".amount)) " +
+            "FROM BudgetExpense e JOIN Budget b ON b.id = e.budget.id " +
+            "WHERE b.budgetUser.id = ?1 " +
+            "GROUP BY function('date_part', 'dow', e.expenseDate)"
+    )
+    List<DayExpenseDTO> getTotalSpentByWeekday(UUID userId);
 }

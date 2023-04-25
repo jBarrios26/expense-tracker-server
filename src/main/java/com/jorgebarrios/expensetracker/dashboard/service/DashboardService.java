@@ -4,6 +4,7 @@ import com.jorgebarrios.expensetracker.dashboard.model.CategoryInfo;
 import com.jorgebarrios.expensetracker.dashboard.model.SpentItem;
 import com.jorgebarrios.expensetracker.expense.BudgetExpense;
 import com.jorgebarrios.expensetracker.expense.model.CategoryInfoDTO;
+import com.jorgebarrios.expensetracker.expense.model.DayExpenseDTO;
 import com.jorgebarrios.expensetracker.expense.model.TotalSpentDTO;
 import com.jorgebarrios.expensetracker.expense.repository.BudgetExpenseRepository;
 import lombok.RequiredArgsConstructor;
@@ -122,5 +123,41 @@ public class DashboardService {
                                                5
                                        )
                                );
+    }
+
+    public List<DayExpenseDTO> getTotalSpentByWeekDay(
+            final UUID userId
+    ) {
+
+        List<DayExpenseDTO> weekDayExpenses =
+                budgetExpenseRepository.getTotalSpentByWeekday(userId)
+                                       .stream()
+                                       .sorted(Comparator.comparing(DayExpenseDTO::getWeekDay))
+                                       .toList();
+        List<DayExpenseDTO> weekDayAllExpenses = new ArrayList<>();
+
+        int weekday = 0;
+        for (int day = 0; day < 7; day++) {
+
+            if (day >= weekDayExpenses.size()) {
+                weekDayAllExpenses.add(DayExpenseDTO.empty(day));
+                continue;
+            }
+
+            weekDayAllExpenses.add(weekDayExpenses.get(weekday)
+                                                  .getWeekDay() == day
+                                   ? weekDayExpenses.get(weekday)
+                                   : DayExpenseDTO.empty(day));
+            if (weekDayExpenses.get(weekday)
+                               .getWeekDay() == day)
+                weekday += 1;
+        }
+        return weekDayAllExpenses.stream()
+                                 .map(expense -> new DayExpenseDTO(
+                                              (double) expense.getWeekDay(),
+                                              expense.getSpentTotal()
+                                      )
+                                 )
+                                 .toList();
     }
 }
