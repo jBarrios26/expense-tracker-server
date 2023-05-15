@@ -27,11 +27,12 @@ public interface BudgetExpenseRepository extends JpaRepository<BudgetExpense,
 
     @Query(
             "SELECT new com.jorgebarrios.expensetracker.expense.model" +
-            ".TotalSpentDTO(extract(month from e.createDate), SUM(e.amount) )" +
+            ".TotalSpentDTO(extract(month from e.expenseDate), SUM(e.amount) )" +
             "FROM BudgetExpense e JOIN Budget b on(b.id = e.budget) " +
             "WHERE b.budgetUser.id = ?1 " +
-            "GROUP BY extract (month from e.createDate), extract(year from e.createDate) " +
-            "HAVING extract(year from e.createDate) = ?2 "
+            "GROUP BY extract (month from e.expenseDate), extract(year from e" +
+            ".expenseDate) " +
+            "HAVING extract(year from e.expenseDate) = ?2 "
 
     )
     List<TotalSpentDTO> getBudgetExpenseByMonth(
@@ -41,13 +42,13 @@ public interface BudgetExpenseRepository extends JpaRepository<BudgetExpense,
 
     @Query(
             "SELECT new com.jorgebarrios.expensetracker.expense.model" +
-            ".TotalSpentDTO(extract(day from e.createDate), SUM(e.amount) )" +
+            ".TotalSpentDTO(extract(day from e.expenseDate), SUM(e.amount) )" +
             "FROM BudgetExpense e JOIN Budget b on(b.id = e.budget) " +
             "WHERE b.budgetUser.id = ?1 " +
-            "GROUP BY extract(day from e.createDate), extract (month from e" +
-            ".createDate), extract(year from e.createDate) " +
-            "HAVING extract(year from e.createDate) = ?3 AND extract(month " +
-            "from e.createDate) = ?2 "
+            "GROUP BY extract(day from e.expenseDate), extract (month from e" +
+            ".expenseDate), extract(year from e.expenseDate) " +
+            "HAVING extract(year from e.expenseDate) = ?3 AND extract(month " +
+            "from e.expenseDate) = ?2 "
 
     )
     List<TotalSpentDTO> getBudgetExpenseByDay(

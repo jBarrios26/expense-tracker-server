@@ -42,13 +42,52 @@ public class DashboardService {
             final UUID userId,
             final int year
     ) {
-        return budgetExpenseRepository.getBudgetExpenseByMonth(
-                                              userId,
-                                              year
-                                      )
-                                      .stream()
-                                      .sorted(Comparator.comparing(TotalSpentDTO::getDateOfExpense))
-                                      .toList();
+        List<TotalSpentDTO> monthExpenseList =
+                budgetExpenseRepository.getBudgetExpenseByMonth(
+                                               userId,
+                                               year
+                                       )
+                                       .stream()
+                                       .sorted(Comparator.comparing(TotalSpentDTO::getDateOfExpense))
+                                       .toList();
+        List<TotalSpentDTO> expensesByDayInMonth = new ArrayList<>();
+        int dayExpenseListIndex = 0;
+        for (int day = 1; day <= 12; day++) {
+            dayExpenseListIndex = getDayExpenseListIndex(
+                    monthExpenseList,
+                    expensesByDayInMonth,
+                    dayExpenseListIndex,
+                    day
+            );
+        }
+        return expensesByDayInMonth.stream()
+                                   .map(expense -> new TotalSpentDTO(
+                                                expense.getDateOfExpense(),
+                                                expense.getTotalSpent()
+                                        )
+                                   )
+                                   .toList();
+
+    }
+
+    private int getDayExpenseListIndex(
+            List<TotalSpentDTO> monthExpenseList,
+            List<TotalSpentDTO> expensesByDayInMonth,
+            int dayExpenseListIndex,
+            int day
+    ) {
+        if (dayExpenseListIndex >= monthExpenseList.size()) {
+            expensesByDayInMonth.add(TotalSpentDTO.empty(day));
+            return dayExpenseListIndex;
+        }
+        expensesByDayInMonth.add(monthExpenseList.get(dayExpenseListIndex)
+                                                 .getDateOfExpense() == day
+                                 ? monthExpenseList.get(dayExpenseListIndex)
+                                 : TotalSpentDTO.empty(day));
+        if (monthExpenseList.get(dayExpenseListIndex)
+                            .getDateOfExpense() == day)
+            dayExpenseListIndex += 1;
+        return dayExpenseListIndex;
     }
 
     public List<SpentItem> getTotalSpentByDay(
@@ -81,17 +120,12 @@ public class DashboardService {
         List<TotalSpentDTO> expensesByDayInMonth = new ArrayList<>();
         int dayExpenseListIndex = 0;
         for (int day = 1; day <= lastDayOfCurrentMonth; day++) {
-            if (dayExpenseListIndex >= dayExpenseList.size()) {
-                expensesByDayInMonth.add(TotalSpentDTO.empty(day));
-                continue;
-            }
-            expensesByDayInMonth.add(dayExpenseList.get(dayExpenseListIndex)
-                                                   .getDateOfExpense() == day
-                                     ? dayExpenseList.get(dayExpenseListIndex)
-                                     : TotalSpentDTO.empty(day));
-            if (dayExpenseList.get(dayExpenseListIndex)
-                              .getDateOfExpense() == day)
-                dayExpenseListIndex += 1;
+            dayExpenseListIndex = getDayExpenseListIndex(
+                    dayExpenseList,
+                    expensesByDayInMonth,
+                    dayExpenseListIndex,
+                    day
+            );
         }
         return expensesByDayInMonth.stream()
                                    .map(expense -> new SpentItem(
