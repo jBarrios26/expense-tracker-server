@@ -4,6 +4,7 @@ import com.jorgebarrios.expensetracker.budget.Budget;
 import com.jorgebarrios.expensetracker.budget.repository.BudgetRepository;
 import com.jorgebarrios.expensetracker.category.model.BudgetCategories;
 import com.jorgebarrios.expensetracker.category.model.BudgetCategory;
+import com.jorgebarrios.expensetracker.category.repository.BudgetCategoriesRepository;
 import com.jorgebarrios.expensetracker.expense.BudgetExpense;
 import com.jorgebarrios.expensetracker.expense.exception.InvalidExpenseDateException;
 import com.jorgebarrios.expensetracker.expense.exception.UnknownExpenseException;
@@ -12,8 +13,6 @@ import com.jorgebarrios.expensetracker.expense.repository.BudgetExpenseRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,15 +21,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BudgetExpenseService {
     private final BudgetExpenseRepository budgetExpenseRepository;
+    private final BudgetCategoriesRepository budgetCategoriesRepository;
     private final BudgetRepository budgetRepository;
 
-    public BudgetExpense editExpense (final String expenseId,
-            final BudgetExpenseDTO updatedExpense) {
+    public BudgetExpense editExpense(
+            final String expenseId,
+            final BudgetExpenseDTO updatedExpense
+    ) {
 
         Optional<BudgetExpense> expenseOptional =
                 budgetExpenseRepository.findById(UUID.fromString(expenseId));
         if (expenseOptional.isEmpty()) {
-            throw  new UnknownExpenseException(expenseId);
+            throw new UnknownExpenseException(expenseId);
         }
 
         BudgetExpense expense = expenseOptional.get();
@@ -38,32 +40,46 @@ public class BudgetExpenseService {
         BudgetCategory categories = expense.getBudgetCategory();
 
 
-
         Double oldAmount = expense.getAmount();
 
         if (updatedExpense.getAmount() != null) {
             expense.setAmount(updatedExpense.getAmount());
-            budget.setTotalSpending(budget.getTotalSpending() - oldAmount + updatedExpense.getAmount());
+            budget.setTotalSpending(budget.getTotalSpending() - oldAmount +
+                                    updatedExpense.getAmount());
             budgetRepository.save(budget);
+
+            Optional<BudgetCategories> budgetCategoriesOptional =
+                    budgetCategoriesRepository.findBudgetCategoriesByBudgetAndBudgetCategory(
+                            budget,
+                            expense.getBudgetCategory()
+                    );
+
+            if (budgetCategoriesOptional.isPresent()) {
+                BudgetCategories category = budgetCategoriesOptional.get();
+                category.setCurrentSpending(
+                        category.getCurrentSpending() - oldAmount +
+                        updatedExpense.getAmount());
+                budgetCategoriesRepository.save(category);
+            }
         }
         if (updatedExpense.getName() != null) {
             expense.setName(updatedExpense.getName());
 
         }
         if (updatedExpense.getExpenseDate() != null) {
-            LocalDate newDate =  LocalDate.ofEpochDay(updatedExpense.getExpenseDate().getTime());
-            LocalDate oldDate =  LocalDate.ofEpochDay(expense.getExpenseDate().getTime());
-            if (!newDate.getMonth().equals(oldDate.getMonth()) && newDate.getYear() != oldDate.getYear()) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(expense.getExpenseDate());
+            int oldMonth = cal.get(Calendar.MONTH);
+            int oldYear = cal.get(Calendar.YEAR);
+            cal.setTime(updatedExpense.getExpenseDate());
+            int newMonth = cal.get(Calendar.MONTH);
+            int newYear = cal.get(Calendar.YEAR);
+
+            if (newMonth != oldMonth || newYear != oldYear) {
                 throw new InvalidExpenseDateException(updatedExpense.getExpenseDate());
             }
             expense.setExpenseDate(updatedExpense.getExpenseDate());
         }
-
-        BudgetExpense newBudgetExpense =  budgetExpenseRepository.save(expense);
-
-
-
-
-        return  newBudgetExpense;
-     }
+        return budgetExpenseRepository.save(expense);
+    }
 }
