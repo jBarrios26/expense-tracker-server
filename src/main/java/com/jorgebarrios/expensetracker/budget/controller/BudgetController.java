@@ -235,10 +235,11 @@ public class BudgetController {
                                                          expense.getAmount(),
                                                          expense.getExpenseDate(),
                                                          new ExpenseCategory(
+                                                                 expense.getBudget().getId().toString(),
                                                                  expense.getBudgetCategory()
-                                                                        .getName(),
+                                                                         .getName(),
                                                                  expense.getBudgetCategory()
-                                                                        .getColor()
+                                                                         .getColor()
                                                          )
                                                  ))
                                                  .toList(),
@@ -293,10 +294,11 @@ public class BudgetController {
                                            expense.getAmount(),
                                            expense.getExpenseDate(),
                                            new ExpenseCategory(
+                                                   expense.getBudget().getId().toString(),
                                                    expense.getBudgetCategory()
-                                                          .getName(),
+                                                           .getName(),
                                                    expense.getBudgetCategory()
-                                                          .getColor()
+                                                           .getColor()
                                            )
                                    )
                              );
