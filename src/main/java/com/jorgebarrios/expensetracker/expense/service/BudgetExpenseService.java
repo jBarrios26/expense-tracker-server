@@ -10,6 +10,7 @@ import com.jorgebarrios.expensetracker.expense.exception.InvalidExpenseDateExcep
 import com.jorgebarrios.expensetracker.expense.exception.UnknownExpenseException;
 import com.jorgebarrios.expensetracker.expense.model.BudgetExpenseDTO;
 import com.jorgebarrios.expensetracker.expense.repository.BudgetExpenseRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -81,5 +82,42 @@ public class BudgetExpenseService {
             expense.setExpenseDate(updatedExpense.getExpenseDate());
         }
         return budgetExpenseRepository.save(expense);
+    }
+
+    @Transactional
+    public boolean removeExpense(
+            final String expenseId
+    ) {
+
+        Optional<BudgetExpense> expenseOptional =
+                budgetExpenseRepository.findById(UUID.fromString(expenseId));
+        if (expenseOptional.isEmpty()) {
+            throw new UnknownExpenseException(expenseId);
+        }
+
+        BudgetExpense expense = expenseOptional.get();
+        Budget budget = expense.getBudget();
+
+        Double oldAmount = expense.getAmount();
+        budget.setTotalSpending(budget.getTotalSpending() - oldAmount);
+        budget.getBudgetExpenses()
+              .remove(expense);
+        budgetRepository.save(budget);
+
+        Optional<BudgetCategories> budgetCategoriesOptional =
+                budgetCategoriesRepository.findBudgetCategoriesByBudgetAndBudgetCategory(
+                        budget,
+                        expense.getBudgetCategory()
+                );
+
+        if (budgetCategoriesOptional.isPresent()) {
+            BudgetCategories category = budgetCategoriesOptional.get();
+            category.setCurrentSpending(
+                    category.getCurrentSpending() - oldAmount);
+            budgetCategoriesRepository.save(category);
+        }
+
+        budgetExpenseRepository.delete(expense);
+        return true;
     }
 }

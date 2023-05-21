@@ -26,4 +26,15 @@ public class BudgetExpenseController {
                 );
         return ResponseEntity.ok(updatedExpense);
     }
+
+    @DeleteMapping("/{expenseId}")
+    public ResponseEntity<Boolean> removeExpense(
+            @PathVariable String expenseId
+    ) {
+        boolean wasSuccessfullyDeleted =
+                budgetExpenseService.removeExpense(
+                        expenseId
+                );
+        return ResponseEntity.ok(wasSuccessfullyDeleted);
+    }
 }

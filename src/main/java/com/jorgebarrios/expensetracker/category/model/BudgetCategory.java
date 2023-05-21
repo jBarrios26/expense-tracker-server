@@ -34,17 +34,27 @@ public class BudgetCategory {
 
     @JsonIgnore
     @JsonManagedReference
-    @ManyToOne(cascade = CascadeType.ALL, optional = true)
+    @ManyToOne(
+            cascade = CascadeType.ALL,
+            optional = true
+    )
     private BudgetUser budgetUser;
 
     @JsonIgnore
     @JsonManagedReference
-    @OneToMany(mappedBy = "budgetCategory", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "budgetCategory",
+            cascade = CascadeType.ALL
+    )
     private Set<BudgetCategories> budgetCategories;
 
     @JsonIgnore
     @JsonManagedReference
-    @OneToMany(mappedBy = "budgetCategory", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "budgetCategory",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Set<BudgetExpense> budgetExpenses;
 
     public BudgetCategory(

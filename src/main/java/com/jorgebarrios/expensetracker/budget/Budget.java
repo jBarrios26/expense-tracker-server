@@ -44,15 +44,32 @@ public class Budget {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdate;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "budget_user", nullable = false)
+    @ManyToOne(
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
+    @JoinColumn(
+            name = "budget_user",
+            nullable = false
+    )
     private BudgetUser budgetUser;
 
-    @OneToMany(mappedBy = "budget", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "budget",
+            fetch = FetchType.EAGER,
+            cascade =
+                    CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Set<BudgetExpense> budgetExpenses;
 
-    @OneToMany(mappedBy = "budget", fetch = FetchType.EAGER, cascade =
-            CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "budget",
+            fetch = FetchType.EAGER,
+            cascade =
+                    CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Set<BudgetCategories> budgetCategories;
 
     public Budget(

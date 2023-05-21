@@ -44,11 +44,17 @@ public class BudgetExpense {
     @JsonIgnore
     @JsonManagedReference
     @ManyToOne
-    @JoinColumn(name = "budget", nullable = false)
+    @JoinColumn(
+            name = "budget",
+            nullable = false
+    )
     private Budget budget;
     @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "budget_category", nullable = false)
+    @ManyToOne()
+    @JoinColumn(
+            name = "budget_category",
+            nullable = false
+    )
     private BudgetCategory budgetCategory;
 
     public BudgetExpense(
