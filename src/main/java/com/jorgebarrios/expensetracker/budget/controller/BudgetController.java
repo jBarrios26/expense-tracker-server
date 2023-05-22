@@ -236,6 +236,9 @@ public class BudgetController {
                                                          expense.getExpenseDate(),
                                                          new ExpenseCategory(
                                                                  expense.getBudgetCategory()
+                                                                        .getId()
+                                                                        .toString(),
+                                                                 expense.getBudgetCategory()
                                                                         .getName(),
                                                                  expense.getBudgetCategory()
                                                                         .getColor()
@@ -293,6 +296,9 @@ public class BudgetController {
                                            expense.getAmount(),
                                            expense.getExpenseDate(),
                                            new ExpenseCategory(
+                                                   expense.getBudgetCategory()
+                                                          .getId()
+                                                          .toString(),
                                                    expense.getBudgetCategory()
                                                           .getName(),
                                                    expense.getBudgetCategory()
