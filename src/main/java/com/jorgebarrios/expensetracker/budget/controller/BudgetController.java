@@ -235,11 +235,13 @@ public class BudgetController {
                                                          expense.getAmount(),
                                                          expense.getExpenseDate(),
                                                          new ExpenseCategory(
-                                                                 expense.getBudget().getId().toString(),
                                                                  expense.getBudgetCategory()
-                                                                         .getName(),
+                                                                        .getId()
+                                                                        .toString(),
                                                                  expense.getBudgetCategory()
-                                                                         .getColor()
+                                                                        .getName(),
+                                                                 expense.getBudgetCategory()
+                                                                        .getColor()
                                                          )
                                                  ))
                                                  .toList(),
@@ -294,11 +296,13 @@ public class BudgetController {
                                            expense.getAmount(),
                                            expense.getExpenseDate(),
                                            new ExpenseCategory(
-                                                   expense.getBudget().getId().toString(),
                                                    expense.getBudgetCategory()
-                                                           .getName(),
+                                                          .getId()
+                                                          .toString(),
                                                    expense.getBudgetCategory()
-                                                           .getColor()
+                                                          .getName(),
+                                                   expense.getBudgetCategory()
+                                                          .getColor()
                                            )
                                    )
                              );
