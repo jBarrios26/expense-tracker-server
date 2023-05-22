@@ -7,6 +7,8 @@ import com.jorgebarrios.expensetracker.budget.exception.UnknownBudgetCategoryExc
 import com.jorgebarrios.expensetracker.category.exception.BudgetCategoryNotFound;
 import com.jorgebarrios.expensetracker.common.BasicErrorResponse;
 import com.jorgebarrios.expensetracker.common.exception.BudgetUserNotFoundException;
+import com.jorgebarrios.expensetracker.expense.exception.InvalidExpenseDateException;
+import com.jorgebarrios.expensetracker.expense.exception.UnknownExpenseException;
 import com.jorgebarrios.expensetracker.user.exceptions.UserAlreadyRegisterException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice(
-        basePackages = {"com.jorgebarrios.expensetracker.user", "com" +
-                                                                ".jorgebarrios.expensetracker.budget"
+        basePackages = {"com.jorgebarrios.expensetracker.user",
+                        "com.jorgebarrios.expensetracker.budget",
+                        "com.jorgebarrios.expensetracker.expense"
         }
 )
 public class BudgetUserControllerAdvice extends ResponseEntityExceptionHandler {
@@ -116,6 +119,29 @@ public class BudgetUserControllerAdvice extends ResponseEntityExceptionHandler {
                                      )
                              );
     }
+
+    @ExceptionHandler(InvalidExpenseDateException.class)
+    ResponseEntity<BasicErrorResponse> invalidExpenseDateExceptionHandler(InvalidExpenseDateException runtimeException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(
+                                     new BasicErrorResponse(
+                                             10,
+                                             runtimeException.getMessage()
+                                     )
+                             );
+    }
+
+    @ExceptionHandler(UnknownExpenseException.class)
+    ResponseEntity<BasicErrorResponse> unknownExpenseExceptionHandler(UnknownExpenseException runtimeException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(
+                                     new BasicErrorResponse(
+                                             11,
+                                             runtimeException.getMessage()
+                                     )
+                             );
+    }
+
 
     @ExceptionHandler(RuntimeException.class)
     ResponseEntity<BasicErrorResponse> runtimeExceptionAdvice(RuntimeException runtimeException) {
