@@ -13,4 +13,7 @@ public interface BudgetCategoriesRepository extends
             Budget budget,
             BudgetCategory budgetCategory
     );
+    
+
+    void deleteBudgetCategoriesByBudget(Budget budget);
 }

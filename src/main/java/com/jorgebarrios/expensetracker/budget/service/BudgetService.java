@@ -209,4 +209,20 @@ public class BudgetService {
         );
         return budgetExpenseRepository.save(expense);
     }
+
+    public Boolean deleteBudget(final String budgetId) {
+        Optional<Budget> budgetOptional =
+                budgetRepository.findById(UUID.fromString(budgetId));
+
+        if (budgetOptional.isEmpty()) {
+            throw new BudgetNotFoundException(budgetId);
+        }
+
+        Budget budget = budgetOptional.get();
+        budgetCategoriesRepository.deleteBudgetCategoriesByBudget(budget);
+        budgetExpenseRepository.deleteBudgetExpenseByBudget(budget);
+        budgetRepository.delete(budget);
+
+        return true;
+    }
 }

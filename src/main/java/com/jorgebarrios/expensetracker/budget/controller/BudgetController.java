@@ -405,4 +405,12 @@ public class BudgetController {
                 );
         return ResponseEntity.ok(budgetListResponse);
     }
+
+    @DeleteMapping(path = "/{budgetId}")
+    public ResponseEntity<Boolean> deleteBudget(
+            @PathVariable String budgetId
+    ) {
+        budgetService.deleteBudget(budgetId);
+        return ResponseEntity.ok(true);
+    }
 }
