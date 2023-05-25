@@ -15,6 +15,7 @@ import com.jorgebarrios.expensetracker.expense.BudgetExpense;
 import com.jorgebarrios.expensetracker.expense.repository.BudgetExpenseRepository;
 import com.jorgebarrios.expensetracker.user.BudgetUser;
 import com.jorgebarrios.expensetracker.user.BudgetUserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -210,7 +211,8 @@ public class BudgetService {
         return budgetExpenseRepository.save(expense);
     }
 
-    public Boolean deleteBudget(final String budgetId) {
+    @Transactional
+    public void deleteBudget(final String budgetId) {
         Optional<Budget> budgetOptional =
                 budgetRepository.findById(UUID.fromString(budgetId));
 
@@ -219,10 +221,17 @@ public class BudgetService {
         }
 
         Budget budget = budgetOptional.get();
-        budgetCategoriesRepository.deleteBudgetCategoriesByBudget(budget);
-        budgetExpenseRepository.deleteBudgetExpenseByBudget(budget);
-        budgetRepository.delete(budget);
+        try {
+            System.out.println("Eliminando categories");
 
-        return true;
+//            budgetCategoriesRepository.deleteBudgetCategoriesByBudget(budget);
+//            System.out.println("Eliminando expenses");
+//            budgetExpenseRepository.deleteBudgetExpenseByBudget(budget);
+            System.out.println("Eliminando budget");
+            budgetRepository.delete(budget);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

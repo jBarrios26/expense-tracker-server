@@ -18,12 +18,12 @@ public class BudgetCategories {
     private Long id;
 
     @JsonBackReference
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "budget")
     private Budget budget;
 
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "budget_category")
     private BudgetCategory budgetCategory;
 

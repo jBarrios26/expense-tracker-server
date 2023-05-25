@@ -30,7 +30,7 @@ public class BudgetUser {
     private Byte sex;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "budgetUser")
+    @OneToMany(mappedBy = "budgetUser", cascade = CascadeType.REMOVE)
     private List<Budget> budgets;
 
     @JsonBackReference
