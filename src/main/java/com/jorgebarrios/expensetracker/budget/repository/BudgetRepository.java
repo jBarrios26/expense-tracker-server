@@ -24,5 +24,6 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
             final Date from,
             Pageable pageable
     );
-    
+
+    void deleteBudgetById(UUID id);
 }

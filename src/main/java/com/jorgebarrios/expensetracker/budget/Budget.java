@@ -45,8 +45,7 @@ public class Budget {
     private Date lastUpdate;
 
     @ManyToOne(
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL
+            fetch = FetchType.EAGER
     )
     @JoinColumn(
             name = "budget_user",

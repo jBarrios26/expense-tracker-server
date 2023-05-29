@@ -1,5 +1,6 @@
 package com.jorgebarrios.expensetracker.expense.repository;
 
+import com.jorgebarrios.expensetracker.budget.Budget;
 import com.jorgebarrios.expensetracker.expense.BudgetExpense;
 import com.jorgebarrios.expensetracker.expense.model.CategoryInfoDTO;
 import com.jorgebarrios.expensetracker.expense.model.DayExpenseDTO;
@@ -75,4 +76,6 @@ public interface BudgetExpenseRepository extends JpaRepository<BudgetExpense,
             "GROUP BY function('date_part', 'dow', e.expenseDate)"
     )
     List<DayExpenseDTO> getTotalSpentByWeekday(UUID userId);
+
+    void deleteBudgetExpenseByBudget(Budget budget);
 }
